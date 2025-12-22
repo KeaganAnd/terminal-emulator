@@ -1,2 +1,3 @@
 build/
 external/freetype/build/
+.cache/

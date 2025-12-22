@@ -1,0 +1,11 @@
+{
+	"InstallScripts" : 
+	[
+		"D:/CODE/C/terminal_emulator/build/cmake_install.cmake",
+		"D:/CODE/C/terminal_emulator/build/external/glfw/cmake_install.cmake",
+		"D:/CODE/C/terminal_emulator/build/external/glfw/src/cmake_install.cmake",
+		"D:/CODE/C/terminal_emulator/build/external/glfw/docs/cmake_install.cmake",
+		"D:/CODE/C/terminal_emulator/build/external/freetype/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

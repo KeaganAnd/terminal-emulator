@@ -1,3 +1,19 @@
 build/
 external/freetype/build/
 .cache/
+# CMake generated files in src/
+src/CMakeFiles/
+src/CMakeCache.txt
+src/Makefile
+src/cmake_install.cmake
+src/CPackConfig.cmake
+src/CPackSourceConfig.cmake
+
+# Compiled executables
+src/mag-terminal
+
+# Object and archive files
+*.o
+*.a
+*.so
+*.dll

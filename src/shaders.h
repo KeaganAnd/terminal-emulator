@@ -10,27 +10,10 @@
  */
 
 /** Vertex shader source code - Handles text quad positioning and texture coordinate mapping */
-const char* vertexShaderSrc =
-"#version 330 core\n"
-"layout(location = 0) in vec4 vertex;\n"
-"out vec2 TexCoords;\n"
-"uniform mat4 projection;\n"
-"void main() {\n"
-"    gl_Position = projection * vec4(vertex.xy, 0.0, 1.0);\n"
-"    TexCoords = vertex.zw;\n"
-"}\n";
+extern const char* vertexShaderSrc;
 
 /** Fragment shader source code - Renders textured quads with alpha blending for text */
-const char* fragmentShaderSrc =
-"#version 330 core\n"
-"in vec2 TexCoords;\n"
-"out vec4 FragColor;\n"
-"uniform sampler2D text;\n"
-"uniform vec3 textColor;\n"
-"void main() {\n"
-"    float alpha = texture(text, vec2(TexCoords.x, 1.0 - TexCoords.y)).r;\n"
-"    FragColor = vec4(textColor, alpha);\n"
-"}\n";
+extern const char* fragmentShaderSrc;
 
 /**
  * Compiles a single shader from source code

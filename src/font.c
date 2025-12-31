@@ -6,6 +6,7 @@
 /** Global array storing all loaded character glyphs */
 Character Characters[128];
 
+int fontSize = 14;
 /**
  * Loads a TrueType font file and generates OpenGL textures for all ASCII characters (0-127)
  * Creates a glyph texture for each character, sets up texture parameters, and stores metric
@@ -14,6 +15,9 @@ Character Characters[128];
  * @param fontPath - Path to the .ttf font file to load
  * @return 1 on success, 0 on failure (FreeType initialization error, file not found, etc)
  */
+
+int getFontSize(){return fontSize;}
+
 int loadFont(const char* fontPath) {
     FT_Library ft;
     FT_Face face;
@@ -24,7 +28,7 @@ int loadFont(const char* fontPath) {
         return 0;
     }
 
-    FT_Set_Pixel_Sizes(face, 0, 48);
+    FT_Set_Pixel_Sizes(face, 0, fontSize); //Change font size here
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
     for (unsigned char c=0; c<128; c++){

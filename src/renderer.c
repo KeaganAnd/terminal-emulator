@@ -24,9 +24,11 @@ extern Character Characters[128];
  * @param g - Green color component (0.0 to 1.0)
  * @param b - Blue color component (0.0 to 1.0)
  */
-void renderText(GLuint shader, const char* text, float x, float y, float scale, float r, float g, float b) {
+
+
+void renderText(GLuint shader, const char* text, float x, float y, float scale, color3 color) {
     glUseProgram(shader);
-    glUniform3f(glGetUniformLocation(shader,"textColor"), r, g, b);
+    glUniform3f(glGetUniformLocation(shader,"textColor"), color.r, color.g, color.b);
     glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(VAO);
 

@@ -7,6 +7,7 @@
 #include "shaders.h"
 #include "font.h"
 #include "renderer.h"
+#include "textHandler.h"
 
 extern Character Characters[128];
 extern GLuint VAO, VBO;
@@ -19,8 +20,11 @@ int main() {
 #ifdef __APPLE__
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
+    
+    short screenWidth = 800;
+    short screenHeight = 600;
 
-    GLFWwindow* window = glfwCreateWindow(800, 600, "OpenGL Text Debug", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(screenWidth, screenHeight, "Mag Terminal", NULL, NULL);
     if (!window) { glfwTerminate(); return -1; }
     glfwMakeContextCurrent(window);
 
@@ -43,13 +47,27 @@ int main() {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
-    if (!loadFont("/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf")) {
+    int loadedFont;
+
+    #if defined(_WIN32)
+    // Windows (both 32 and 64 bit)
+        loadedFont = loadFont("C:/Windows/Fonts/consola.ttf");
+    #elif defined(__APPLE__) && defined(__MACH__)
+        fprintf(stderr,"Text is not setup for mac yet\n");
+    #elif defined(__linux__) || defined(__unix__) || defined(__posix__)
+        loadedFont = loadFont("/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf");
+    #else
+        // Unknown OS
+        fptrintf(stderr,"Text is not setup for this OS yet\n");
+    #endif
+
+    if (!loadedFont) {
         fprintf(stderr,"Font load failed\n"); return -1;
     }
 
     float projection[16] = {0};
-    projection[0] = 2.0f / 800.0f;
-    projection[5] = 2.0f / 600.0f;
+    projection[0] = 2.0f / screenWidth;
+    projection[5] = 2.0f / screenHeight;
     projection[10] = -1.0f;
     projection[12] = -1.0f;
     projection[13] = -1.0f;
@@ -59,12 +77,8 @@ int main() {
     glUniformMatrix4fv(glGetUniformLocation(shader,"projection"), 1, GL_FALSE, projection);
 
     while (!glfwWindowShouldClose(window)) {
-        glClearColor(0.1f, 0.1f, 0.2f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        // Render yellow text
-        renderText(shader, "Hi Sylv!", 25.0f, 550.0f, 1.0f, 1.0f, 1.0f, 0.0f);
-
+        glClearColor(COLOR4_BLACK.r, COLOR4_BLACK.g, COLOR4_BLACK.b, COLOR4_BLACK.a); //Background color color4 object
+        printLine("Test Text", shader);
         glfwSwapBuffers(window);
         glfwPollEvents();
     }

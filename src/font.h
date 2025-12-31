@@ -19,5 +19,5 @@ extern Character Characters[128];
  * @return 1 on success, 0 on failure
  */
 int loadFont(const char* fontPath);
-
+int getFontSize();
 #endif // FONT_H

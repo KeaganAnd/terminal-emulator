@@ -21,8 +21,8 @@ int main() {
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
     
-    short screenWidth = 800;
-    short screenHeight = 600;
+    const short screenWidth = 800;
+    const short screenHeight = 600;
 
     GLFWwindow* window = glfwCreateWindow(screenWidth, screenHeight, "Mag Terminal", NULL, NULL);
     if (!window) { glfwTerminate(); return -1; }
@@ -53,7 +53,7 @@ int main() {
     // Windows (both 32 and 64 bit)
         loadedFont = loadFont("C:/Windows/Fonts/consola.ttf");
     #elif defined(__APPLE__) && defined(__MACH__)
-        fprintf(stderr,"Text is not setup for mac yet\n");
+	loadedFont = loadFont("/System/Library/Fonts/Menlo.ttc");
     #elif defined(__linux__) || defined(__unix__) || defined(__posix__)
         loadedFont = loadFont("/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf");
     #else

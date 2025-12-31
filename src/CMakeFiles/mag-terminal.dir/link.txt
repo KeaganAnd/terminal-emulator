@@ -1,1 +1,0 @@
-/usr/bin/cc -rdynamic "CMakeFiles/mag-terminal.dir/main.c.o" -o mag-terminal  libglad.a external/glfw/src/libglfw3.a external/freetype/libfreetype.a -lGL -Wl,-Bstatic -lrt -Wl,-Bdynamic -lm -ldl /usr/lib/x86_64-linux-gnu/libbz2.so /usr/lib/x86_64-linux-gnu/libpng.so /usr/lib/x86_64-linux-gnu/libz.so -lbrotlidec 

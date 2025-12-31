@@ -1,5 +1,5 @@
 
-cmake_minimum_required(VERSION 3.0.0)
+cmake_minimum_required(VERSION 3.10)
 project(mag-terminal C)
 
 set(CMAKE_C_STANDARD 11)
@@ -14,5 +14,43 @@ target_include_directories(glad PUBLIC external/glad/include)
 # --- Add FreeType (build from source) ---
 add_subdirectory(external/freetype)
 
-# --- Build source code ---
-add_subdirectory(cmake)
+# --- Source files ---
+set(SOURCES
+	src/main.c
+	src/shaders.c
+	src/font.c
+	src/renderer.c
+    src/textHandler.c
+)
+
+set(HEADERS
+	src/types.h
+	src/shaders.h
+	src/font.h
+	src/renderer.h
+    src/textHandler.h
+)
+
+# --- Build executable ---
+add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
+
+# --- Include directories ---
+target_include_directories(${PROJECT_NAME} PRIVATE
+	${CMAKE_SOURCE_DIR}/external/glad/include
+	${CMAKE_SOURCE_DIR}/external/glfw/include
+	${CMAKE_SOURCE_DIR}/external/freetype/include
+	${CMAKE_SOURCE_DIR}/src
+)
+
+# --- Link libraries ---
+target_link_libraries(${PROJECT_NAME} PRIVATE glad glfw freetype)
+
+# --- Platform-specific OpenGL linking ---
+if (WIN32)
+	target_link_libraries(${PROJECT_NAME} PRIVATE opengl32)
+elseif (APPLE)
+	find_library(OpenGL_LIBRARY OpenGL)
+	target_link_libraries(${PROJECT_NAME} PRIVATE ${OpenGL_LIBRARY})
+else()
+	target_link_libraries(${PROJECT_NAME} PRIVATE GL)
+endif()

@@ -8,9 +8,13 @@
 #include "font.h"
 #include "renderer.h"
 #include "textHandler.h"
+#include "globals.h"
 
 extern Character Characters[128];
 extern GLuint VAO, VBO;
+
+unsigned short screenWidth = 800;
+unsigned short screenHeight = 600;
 
 int main() {
     if (!glfwInit()) return -1;
@@ -21,8 +25,6 @@ int main() {
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
     
-    const short screenWidth = 800;
-    const short screenHeight = 600;
 
     GLFWwindow* window = glfwCreateWindow(screenWidth, screenHeight, "Mag Terminal", NULL, NULL);
     if (!window) { glfwTerminate(); return -1; }
@@ -76,9 +78,19 @@ int main() {
     glUseProgram(shader);
     glUniformMatrix4fv(glGetUniformLocation(shader,"projection"), 1, GL_FALSE, projection);
 
+    
+    initTextHandler(); 
+    fprintf(stderr, "Text Handler Init\n");
+    TextBuffer* textBuffer = createTextBuffer();
+    fprintf(stderr, "Text Handler Created\n");
+    addToBuffer(textBuffer, "Test Expression");
+    addToBuffer(textBuffer, "Text 2");
+
+    // Main loop
     while (!glfwWindowShouldClose(window)) {
         glClearColor(COLOR4_BLACK.r, COLOR4_BLACK.g, COLOR4_BLACK.b, COLOR4_BLACK.a); //Background color color4 object
-        printLine("Test Text", shader);
+
+        printBuffer(textBuffer, shader); 
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
@@ -90,6 +102,9 @@ int main() {
 
     glfwDestroyWindow(window);
     glfwTerminate();
+
+    freeTextBuffer(textBuffer);
+
     return 0;
 }
 

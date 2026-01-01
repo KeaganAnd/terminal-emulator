@@ -29,6 +29,7 @@ set(HEADERS
 	src/font.h
 	src/renderer.h
     src/textHandler.h
+    src/globals.h
 )
 
 # --- Build executable ---

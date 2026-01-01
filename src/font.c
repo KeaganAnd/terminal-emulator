@@ -2,11 +2,12 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include <stdio.h>
+#include "globals.h"
 
 /** Global array storing all loaded character glyphs */
 Character Characters[128];
 
-int fontSize = 14;
+short fontSize = 14;
 /**
  * Loads a TrueType font file and generates OpenGL textures for all ASCII characters (0-127)
  * Creates a glyph texture for each character, sets up texture parameters, and stores metric

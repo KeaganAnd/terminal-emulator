@@ -1,4 +1,6 @@
 #include "font.h"
+#include "shaders.h"
+#include "types.h"
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include <stdio.h>
@@ -49,8 +51,8 @@ int loadFont(const char* fontPath) {
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
         Characters[c].TextureID = tex;
         Characters[c].Width = face->glyph->bitmap.width;

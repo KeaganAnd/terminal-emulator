@@ -135,7 +135,11 @@ int main() {
                    // ignore echoed input
                 } else {
                     strip_ansi(line_accum);
-                    addToBuffer(textBuffer, line_accum);
+                    strip_shell_prompt(line_accum);
+                    // Only add non-empty lines to buffer
+                    if (strlen(line_accum) > 0) {
+                        addToBuffer(textBuffer, line_accum);
+                    }
                 }
                 line_len = 0; // reset accumulator
             } else if (c != '\r') { // optional: ignore carriage returns

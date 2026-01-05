@@ -21,3 +21,5 @@ ssize_t shell_receive(ShellPTY* shell, char* buffer, size_t bufsize);
 void shell_close(ShellPTY* shell);
 
 void strip_ansi(char* line);
+
+void strip_shell_prompt(char* line);

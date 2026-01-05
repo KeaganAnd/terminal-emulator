@@ -32,7 +32,7 @@ int loadFont(const char* fontPath) {
         return 0;
     }
 
-    FT_Set_Pixel_Sizes(face, 0, yScale *fontSize); 
+    FT_Set_Pixel_Sizes(face, 0, yScale * fontSize); 
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
     for (unsigned char c=0; c<128; c++){
@@ -53,7 +53,7 @@ int loadFont(const char* fontPath) {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glEnable(GL_FRAMEBUFFER_SRGB);
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

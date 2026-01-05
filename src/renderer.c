@@ -10,6 +10,7 @@ GLuint VBO;
 
 /** Reference to the global character array loaded by the font module */
 extern Character Characters[128];
+extern float xScale, yScale;
 
 /**
  * Renders a text string to the screen at the specified position and color

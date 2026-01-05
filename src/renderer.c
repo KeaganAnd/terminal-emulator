@@ -1,6 +1,7 @@
 #include "renderer.h"
+#include "globals.h"
 #include "types.h"
-#include <stdio.h>
+#include <math.h>
 
 /** Vertex Array Object - stores vertex buffer configuration for text quads */
 GLuint VAO;
@@ -20,9 +21,6 @@ extern Character Characters[128];
  * @param x - X position in screen coordinates
  * @param y - Y position in screen coordinates
  * @param scale - Scale factor for rendering (1.0 = normal size)
- * @param r - Red color component (0.0 to 1.0)
- * @param g - Green color component (0.0 to 1.0)
- * @param b - Blue color component (0.0 to 1.0)
  */
 
 
@@ -31,15 +29,16 @@ void renderText(GLuint shader, const char* text, float x, float y, float scale, 
     glUniform3f(glGetUniformLocation(shader,"textColor"), color.r, color.g, color.b);
     glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(VAO);
+    
 
     for (const char* c=text; *c; c++) {
         Character ch = Characters[(unsigned char)(*c)];
         if(ch.TextureID == 0) continue;
 
-        float xpos = x + ch.BearingX * scale;
-        float ypos = y - (ch.Height - ch.BearingY) * scale;
-        float w = ch.Width * scale;
-        float h = ch.Height * scale;
+        float xpos = floorf(x + ch.BearingX * scale);
+        float ypos = floorf(y - (ch.Height - ch.BearingY) * scale);
+        float w = floorf(ch.Width * scale);
+        float h = floorf(ch.Height * scale);
 
         float vertices[6][4] = {  
     {xpos,     ypos,     0.0f, 0.0f},

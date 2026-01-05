@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <unistd.h>
+#include <string.h>
 
 #include "types.h"
 #include "shaders.h"
@@ -9,12 +11,17 @@
 #include "renderer.h"
 #include "textHandler.h"
 #include "globals.h"
+#include "shell.h"
+#include <util.h>
 
 extern Character Characters[128];
 extern GLuint VAO, VBO;
 
 unsigned short screenWidth = 800;
 unsigned short screenHeight = 600;
+
+int bufferScreenHeight, bufferScreenWidth;
+float xScale, yScale;
 
 int main() {
     if (!glfwInit()) return -1;
@@ -36,6 +43,10 @@ int main() {
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    glfwGetFramebufferSize(window, &bufferScreenWidth, &bufferScreenHeight);
+    glfwGetWindowContentScale(window, &xScale, &yScale);
+    
 
     GLuint shader = createShaderProgram(vertexShaderSrc, fragmentShaderSrc);
 
@@ -68,8 +79,8 @@ int main() {
     }
 
     float projection[16] = {0};
-    projection[0] = 2.0f / screenWidth;
-    projection[5] = 2.0f / screenHeight;
+    projection[0] = 2.0f / bufferScreenWidth;
+    projection[5] = 2.0f / bufferScreenHeight;
     projection[10] = -1.0f;
     projection[12] = -1.0f;
     projection[13] = -1.0f;
@@ -83,17 +94,57 @@ int main() {
     fprintf(stderr, "Text Handler Init\n");
     TextBuffer* textBuffer = createTextBuffer();
     fprintf(stderr, "Text Handler Created\n");
-    addToBuffer(textBuffer, "Test Expression");
-    addToBuffer(textBuffer, "Text 2");
+    
+    char shellPath[] = "/bin/zsh";
+    //TESTING SHELL
+    ShellPTY shell = launch_shell(shellPath);
+
+
+    char commandSent[] = "echo Hello World";
+    shell_send(&shell, commandSent);
+    shell_send(&shell, commandSent);
+    shell_send(&shell, commandSent);
+
+    char temp[1024];
+    #define ACCUM_SIZE 1024
+    static char line_accum[ACCUM_SIZE];
+    static size_t line_len = 0;
 
     // Main loop
     while (!glfwWindowShouldClose(window)) {
         glClearColor(COLOR4_BLACK.r, COLOR4_BLACK.g, COLOR4_BLACK.b, COLOR4_BLACK.a); //Background color color4 object
+        ssize_t n = shell_receive(&shell, temp, sizeof(temp)-1);
+
+        if (n > 0) {
+        temp[n] = '\0'; // null-terminate for safety
+
+        // accumulate characters
+        for (ssize_t i = 0; i < n; i++) {
+            char c = temp[i];
+
+            if (c == '\n') {
+                line_accum[line_len] = '\0';
+                if (strncmp(line_accum, commandSent, strlen(commandSent)) == 0) {
+                   // ignore echoed input
+                } else {
+                    strip_ansi(line_accum);
+                    addToBuffer(textBuffer, line_accum);
+                }
+                line_len = 0; // reset accumulator
+            } else if (c != '\r') { // optional: ignore carriage returns
+                if (line_len < ACCUM_SIZE - 1) {
+                    line_accum[line_len++] = c;
+                    }
+                }
+            }
+        }
 
         printBuffer(textBuffer, shader); 
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
+
+    freeTextBuffer(textBuffer);
 
     for (int i=0; i<128; i++) glDeleteTextures(1, &Characters[i].TextureID);
     glDeleteProgram(shader);
@@ -103,7 +154,6 @@ int main() {
     glfwDestroyWindow(window);
     glfwTerminate();
 
-    freeTextBuffer(textBuffer);
 
     return 0;
 }

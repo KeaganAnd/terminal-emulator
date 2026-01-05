@@ -1,6 +1,5 @@
 #include "textHandler.h"
 #include "renderer.h"
-#include "font.h"
 #include "globals.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -46,22 +45,23 @@ void addToBuffer(TextBuffer* tb, char* text) {
 
 void printBuffer(TextBuffer* tb, GLuint shader) {
     
-    short screenLineSize = (int)((screenHeight - linePadding) / (fontSize + linePadding));
-    int currentYPosition = screenHeight - lineSpacing;
+    short screenLineSize = (int)((bufferScreenHeight - linePadding) / (fontSize + linePadding));
+    int currentYPosition = bufferScreenHeight - lineSpacing;
     
 
-    printf("Number of lines allowed on screen: %d\n", screenLineSize);
     for (int i = 0; i < screenLineSize; i++) {
         if (tb ->lines[tb ->head + i][0] != '\0') {
             renderText(shader, tb -> lines[tb ->head + i], 25.0f, currentYPosition, 1.0f, COLOR_WHITE);
             currentYPosition -= lineSpacing;
+            continue;
         }
+        break;
     }
 }
 
 void initTextHandler() {
-	lineSpacing = fontSize + 3;
-	startYPosition = screenHeight - lineSpacing;
+	lineSpacing = (fontSize + 3) * yScale;
+	startYPosition = bufferScreenHeight - lineSpacing;
 	maxLines = 50;
 	maxLineLength = 100;
     linePadding = 3;

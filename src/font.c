@@ -1,4 +1,5 @@
 #include "font.h"
+#include "renderer.h"
 #include "shaders.h"
 #include "types.h"
 #include <ft2build.h>
@@ -31,11 +32,11 @@ int loadFont(const char* fontPath) {
         return 0;
     }
 
-    FT_Set_Pixel_Sizes(face, 0, fontSize); //Change font size here
+    FT_Set_Pixel_Sizes(face, 0, yScale *fontSize); 
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
     for (unsigned char c=0; c<128; c++){
-        if (FT_Load_Char(face,c,FT_LOAD_RENDER | FT_LOAD_TARGET_NORMAL)) {
+        if (FT_Load_Char(face,c,FT_LOAD_RENDER | FT_LOAD_FORCE_AUTOHINT)) {
             fprintf(stderr, "Missing glyph for char '%c'\n", c);
             continue;
         }
@@ -51,9 +52,11 @@ int loadFont(const char* fontPath) {
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glEnable(GL_FRAMEBUFFER_SRGB);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         Characters[c].TextureID = tex;
         Characters[c].Width = face->glyph->bitmap.width;
         Characters[c].Height = face->glyph->bitmap.rows;

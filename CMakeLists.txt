@@ -21,6 +21,7 @@ set(SOURCES
 	src/font.c
 	src/renderer.c
     src/textHandler.c
+    src/shell.c
 )
 
 set(HEADERS
@@ -30,6 +31,7 @@ set(HEADERS
 	src/renderer.h
     src/textHandler.h
     src/globals.h
+    src/shell.h
 )
 
 # --- Build executable ---

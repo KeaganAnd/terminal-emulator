@@ -4,12 +4,15 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <fcntl.h>
-#include <util.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <string.h>
-#include <errno.h>
 #include <signal.h>
+#ifdef __APPLE__
+    #include <util.h>
+#else
+    #include <pty.h>
+#endif
 
 ShellPTY launch_shell(const char* shell_path) {
     ShellPTY shell = {0};

@@ -5,6 +5,13 @@
 #include <unistd.h>
 #include <string.h>
 
+#ifdef __APPLE__
+    #include <util.h>
+#else
+    #include <pty.h>
+#endif
+
+
 #include "types.h"
 #include "shaders.h"
 #include "font.h"
@@ -12,7 +19,7 @@
 #include "textHandler.h"
 #include "globals.h"
 #include "shell.h"
-#include <util.h>
+
 
 extern Character Characters[128];
 extern GLuint VAO, VBO;

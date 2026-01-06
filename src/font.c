@@ -10,7 +10,7 @@
 /** Global array storing all loaded character glyphs */
 Character Characters[128];
 
-short fontSize = 14;
+short fontSize = 30;
 /**
  * Loads a TrueType font file and generates OpenGL textures for all ASCII characters (0-127)
  * Creates a glyph texture for each character, sets up texture parameters, and stores metric

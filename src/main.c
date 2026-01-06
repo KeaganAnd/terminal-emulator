@@ -19,6 +19,7 @@
 #include "textHandler.h"
 #include "globals.h"
 #include "shell.h"
+#include "terminal_logic.h"
 
 
 extern Character Characters[128];
@@ -102,14 +103,14 @@ int main() {
     TextBuffer* textBuffer = createTextBuffer();
     fprintf(stderr, "Text Handler Created\n");
     
-    char shellPath[] = "/bin/zsh";
+    TerminalGrid termGrid = createTerminalGrid();
+
+    char shellPath[] = "/bin/bash";
     //TESTING SHELL
     ShellPTY shell = launch_shell(shellPath);
 
 
     char commandSent[] = "echo Hello World";
-    shell_send(&shell, commandSent);
-    shell_send(&shell, commandSent);
     shell_send(&shell, commandSent);
 
     char temp[1024];
@@ -129,24 +130,6 @@ int main() {
         for (ssize_t i = 0; i < n; i++) {
             char c = temp[i];
 
-            if (c == '\n') {
-                line_accum[line_len] = '\0';
-                if (strncmp(line_accum, commandSent, strlen(commandSent)) == 0) {
-                   // ignore echoed input
-                } else {
-                    strip_ansi(line_accum);
-                    strip_shell_prompt(line_accum);
-                    // Only add non-empty lines to buffer
-                    if (strlen(line_accum) > 0) {
-                        addToBuffer(textBuffer, line_accum);
-                    }
-                }
-                line_len = 0; // reset accumulator
-            } else if (c != '\r') { // optional: ignore carriage returns
-                if (line_len < ACCUM_SIZE - 1) {
-                    line_accum[line_len++] = c;
-                    }
-                }
             }
         }
 
@@ -156,6 +139,7 @@ int main() {
     }
 
     freeTextBuffer(textBuffer);
+    freeGrid(&termGrid);
 
     for (int i=0; i<128; i++) glDeleteTextures(1, &Characters[i].TextureID);
     glDeleteProgram(shader);

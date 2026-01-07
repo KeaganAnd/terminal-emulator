@@ -1,4 +1,4 @@
-#include "renderer.h"
+#include <glad/glad.h>
 
 void printLine(const char* text, GLuint shader);
 void initTextHandler();
@@ -11,7 +11,6 @@ typedef struct {
 
 TextBuffer* createTextBuffer();
 void freeTextBuffer(TextBuffer* tb);
-void addToBuffer(TextBuffer* tb, char* text);
 void printBuffer(TextBuffer* tb, GLuint shader);
 
 

@@ -19,4 +19,11 @@ extern Character Characters[128];
  */
 int loadFont(const char* fontPath);
 int getFontSize();
+
+// Returns the fixed cell advance in pixels used for monospaced layout
+int getCellAdvance();
+
+// Retrieve a glyph for a Unicode codepoint. For ASCII, returns Characters[cp].
+// For non-ASCII, loads and caches the glyph on demand (requires loaded font face).
+const Character* getGlyph(uint32_t codepoint);
 #endif // FONT_H

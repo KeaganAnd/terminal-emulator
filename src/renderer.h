@@ -2,6 +2,8 @@
 #define RENDERER_H
 
 #include <glad/glad.h>
+#include "types.h"
+#include <stdbool.h>
 
 /**
  * Text rendering module
@@ -32,29 +34,21 @@ extern GLuint VBO;
 #define COLOR3_BREAKDOWN(color) = (c).r, (c).g, (c).b
 #define COLOR4_BREAKDOWN(color) = (c).r, (c).g, (c).b, (c).a
 
-// Color structs for alpha and non alpha colors
-typedef struct{
-    float r;
-    float g;
-    float b;
-    float a;
-}color4;
-
-typedef struct{
-    float r;
-    float g;
-    float b;
-} color3;
-
 // Pre made colors
-static const color3 COLOR_RED = {1.0f, 0.0f, 0.0f};
-static const color3 COLOR_GREEN = {0.0f, 1.0f, 0.0f};
-static const color3 COLOR_BLUE = {0.0f, 0.0f, 1.0f};
-static const color3 COLOR_WHITE = {1.0f, 1.0f, 1.0f};
-static const color3 COLOR_BLACK = {0.0f, 0.0f, 0.0f};
+static color3 COLOR_RED = {1.0f, 0.0f, 0.0f};
+static color3 COLOR_GREEN = {0.0f, 1.0f, 0.0f};
+static color3 COLOR_BLUE = {0.0f, 0.0f, 1.0f};
+static color3 COLOR_WHITE = {1.0f, 1.0f, 1.0f};
+static color3 COLOR_BLACK = {0.0f, 0.0f, 0.0f};
 
 static const color4 COLOR4_BLACK = {0.0f, 0.0f, 0.0f, 1.0f};
 
 void renderText(GLuint shader, const char* text, float x, float y, float scale, color3 color);
+
+// Render a single glyph provided as Character metrics/texture
+void renderGlyph(GLuint shader, const Character* ch, float x, float y, float scale, color3 color);
+
+// Render the entire terminal grid with fixed cell spacing
+void renderGrid(GLuint shader, TerminalGrid* grid, bool nerd_font_enabled, bool cursor_visible);
 
 #endif // RENDERER_H

@@ -22,6 +22,8 @@ set(SOURCES
 	src/renderer.c
     src/textHandler.c
     src/shell.c
+	src/terminal_logic.c
+	src/input.c
 )
 
 set(HEADERS
@@ -32,6 +34,8 @@ set(HEADERS
     src/textHandler.h
     src/globals.h
     src/shell.h
+	src/terminal_logic.h
+	src/input.h
 )
 
 # --- Build executable ---

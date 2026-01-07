@@ -2,14 +2,7 @@
 #include <stdlib.h>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <unistd.h>
-#include <string.h>
-
-#ifdef __APPLE__
-    #include <util.h>
-#else
-    #include <pty.h>
-#endif
+#include <stdbool.h>
 
 
 #include "types.h"
@@ -20,6 +13,7 @@
 #include "globals.h"
 #include "shell.h"
 #include "terminal_logic.h"
+#include "input.h"
 
 
 extern Character Characters[128];
@@ -30,6 +24,19 @@ unsigned short screenHeight = 600;
 
 int bufferScreenHeight, bufferScreenWidth;
 float xScale, yScale;
+
+// Cursor blinking
+static double blink_timer = 0.0;
+static double last_time = 0.0;
+static int cursor_visible = 1;
+#define BLINK_INTERVAL 0.5  // 500ms blink interval
+
+// Configuration: whether to render non-ASCII Nerd Font glyphs
+// When false, we will skip drawing them but still advance cursor width.
+// Later, when multi-font support is added, set this true to attempt rendering.
+static bool nerd_font_enabled = true;
+
+
 
 int main() {
     if (!glfwInit()) return -1;
@@ -54,7 +61,10 @@ int main() {
 
     glfwGetFramebufferSize(window, &bufferScreenWidth, &bufferScreenHeight);
     glfwGetWindowContentScale(window, &xScale, &yScale);
+    last_time = glfwGetTime();
     
+    // Set up input callbacks
+    // Shell is created below; callbacks will be finalized after shell launch
 
     GLuint shader = createShaderProgram(vertexShaderSrc, fragmentShaderSrc);
 
@@ -76,7 +86,8 @@ int main() {
     #elif defined(__APPLE__) && defined(__MACH__)
 	loadedFont = loadFont("/System/Library/Fonts/Menlo.ttc");
     #elif defined(__linux__) || defined(__unix__) || defined(__posix__)
-        loadedFont = loadFont("/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf");
+        loadedFont = loadFont("/home/keagan/.local/share/fonts/SpaceMonoNerdFontMono-Regular.ttf");
+        //loadedFont = loadFont("/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf");
     #else
         // Unknown OS
         fptrintf(stderr,"Text is not setup for this OS yet\n");
@@ -99,47 +110,57 @@ int main() {
 
     
     initTextHandler(); 
-    fprintf(stderr, "Text Handler Init\n");
     TextBuffer* textBuffer = createTextBuffer();
+    if(!textBuffer) {fprintf(stderr, "Text buffer not alocated"); exit(1);}
     fprintf(stderr, "Text Handler Created\n");
     
     TerminalGrid termGrid = createTerminalGrid();
+   
 
     char shellPath[] = "/bin/bash";
-    //TESTING SHELL
     ShellPTY shell = launch_shell(shellPath);
-
-
-    char commandSent[] = "echo Hello World";
-    shell_send(&shell, commandSent);
+    
+    // Finalize input callbacks now that shell is available
+    setup_input_callbacks(window, &shell);
 
     char temp[1024];
-    #define ACCUM_SIZE 1024
-    static char line_accum[ACCUM_SIZE];
-    static size_t line_len = 0;
+    ParserState parser_state = {0};  // Initialize parser state
+    parser_state.fg_color = -1;
+    parser_state.bg_color = -1;
 
     // Main loop
     while (!glfwWindowShouldClose(window)) {
-        glClearColor(COLOR4_BLACK.r, COLOR4_BLACK.g, COLOR4_BLACK.b, COLOR4_BLACK.a); //Background color color4 object
+        // Update cursor blink using frame delta time
+        double now = glfwGetTime();
+        double dt = now - last_time;
+        last_time = now;
+        blink_timer += dt;
+        if (blink_timer >= BLINK_INTERVAL) {
+            blink_timer -= BLINK_INTERVAL;
+            cursor_visible = !cursor_visible;
+        }
+        
+        glClearColor(COLOR4_BLACK.r, COLOR4_BLACK.g, COLOR4_BLACK.b, COLOR4_BLACK.a);
+        glClear(GL_COLOR_BUFFER_BIT);
         ssize_t n = shell_receive(&shell, temp, sizeof(temp)-1);
 
         if (n > 0) {
-        temp[n] = '\0'; // null-terminate for safety
-
-        // accumulate characters
-        for (ssize_t i = 0; i < n; i++) {
-            char c = temp[i];
-
-            }
+            temp[n] = '\0';
+            // Parse raw bytes in real-time into grid
+            process_output_bytes(&termGrid, temp, n, &parser_state);
         }
 
-        printBuffer(textBuffer, shader); 
+        // Render the grid every frame so cursor blinks regardless of shell output
+        renderGrid(shader, &termGrid, nerd_font_enabled, cursor_visible);
+        printBuffer(textBuffer, shader);
+
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
 
     freeTextBuffer(textBuffer);
     freeGrid(&termGrid);
+
 
     for (int i=0; i<128; i++) glDeleteTextures(1, &Characters[i].TextureID);
     glDeleteProgram(shader);

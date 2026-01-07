@@ -1,9 +1,22 @@
 #ifndef TYPES_H
 #define TYPES_H
 
-#include "renderer.h"
 #include <glad/glad.h>
 #include <stdint.h>
+
+// Color structs for alpha and non alpha colors
+typedef struct{
+    float r;
+    float g;
+    float b;
+    float a;
+} color4;
+
+typedef struct{
+    float r;
+    float g;
+    float b;
+} color3;
 
 /**
  * Character struct - Represents a single character glyph in the font atlas
@@ -21,7 +34,7 @@ typedef struct {
 typedef struct {
     uint32_t rune;
     color3 fg;
-    color4 bg;
+    color3 bg;
     uint8_t flags;
 } Cell;
 

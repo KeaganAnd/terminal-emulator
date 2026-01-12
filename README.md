@@ -33,6 +33,9 @@ I did use AI for some portions when I got stuck. As I learn more C, I hope to re
 
 ## Building
 
+*The fonts and shell path are hard-coded*
+*If you want to use something other than bash it will need be changed in main.c on line 120*
+
 ### Prerequisites
 
 - **CMake** (3.10+)
@@ -98,4 +101,5 @@ This project is open source. Feel free to learn from it, modify it, or laugh at 
 ---
 
 *"If it's not broken, don't fix it, right?"*
+
 

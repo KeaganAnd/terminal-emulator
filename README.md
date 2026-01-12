@@ -1,6 +1,7 @@
 # Terminal Emulator
 
 A toy terminal emulator written in C with OpenGL, featuring ANSI escape sequences, UTF-8 support, and Nerd Font rendering.
+Learn more about it [here](https://keagana.me/blog1)
 
 ![License](https://img.shields.io/badge/license-MIT-blue)
 ![Language](https://img.shields.io/badge/language-C-brightgreen)
@@ -97,3 +98,4 @@ This project is open source. Feel free to learn from it, modify it, or laugh at 
 ---
 
 *"If it's not broken, don't fix it, right?"*
+
